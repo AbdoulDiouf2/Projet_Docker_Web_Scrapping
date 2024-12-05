@@ -29,31 +29,13 @@ projet/
 ├── web_app/            # Application web
 └── mysql/             # Configuration MySQL
 ```
-## 📁 Structure du Projet
-├── docker-compose.yml
-├── README.md
-├── scrapy_app/
-│   ├── Dockerfile
-│   └── price_comparator/
-│       ├── spiders/
-│       ├── items.py
-│       ├── pipelines.py
-│       └── settings.py
-├── web_app/
-│   ├── Dockerfile
-│   ├── static/
-│   ├── templates/
-│   └── app.py
-└── mysql/
-    ├── Dockerfile
-    └── init.sql
 
 ## 🚦 Prérequis
 
 - Docker
 - Docker Compose
 
-## 🔧 Installation
+## 🔧 Installation et Démarrage
 
 1. Cloner le repository
 2. Lancer les conteneurs avec Docker Compose :
@@ -61,14 +43,20 @@ projet/
    docker-compose up
    ```
 
+## 🌐 Accès aux Services
+
+- **Application Web**: http://localhost:5000
+- **PHPMyAdmin**: http://localhost:8080
+  - Utilisateur: ...
+  - Mot de passe: ...
+- **MySQL**:
+  - Port: 3306
+  - Base de données: price_comparison
+  - Utilisateur: ...
+  - Mot de passe: ...
+
 ## 👥 Équipe
 
-- [Membre 1]
-- [Membre 2]
-- [Membre 3]
-
-## 📝 License
-
-Ce projet est réalisé dans le cadre d'un projet scolaire à l'ESIGELEC.
-
-
+- AMAR Cheikh Mbacké
+- DIOUF Abdoul Ahad Mbacké
+- SOW Aminata
