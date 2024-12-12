@@ -4,25 +4,44 @@ from ..items import ProductItem
 
 class BoulangerSpider(scrapy.Spider):
     name = 'boulanger'
-    start_urls = ['https://www.boulanger.com/resultats?tr=casque']
+    
+    def start_requests(self):
+        # On commence par la première page
+        url = 'https://www.boulanger.com/resultats?tr=casque'
+        yield scrapy.Request(url, callback=self.parse, meta={'page': 1})
     
     custom_settings = {
         'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
 
     def parse(self, response):
-        # Utiliser le XPath pour obtenir tous les produits
+        current_page = response.meta['page']
+        self.logger.info(f'Scraping page {current_page}')
+        
         products = response.xpath("//ul/li[@class=' product-list__item']")
-        self.logger.info(f'Found {len(products)} products')
+        products_count = len(products)
+        self.logger.info(f'Found {products_count} products on page {current_page}')
+
+        # Si aucun produit trouvé, on arrête
+        if products_count == 0:
+            self.logger.info('No more products found, stopping.')
+            return
 
         for product in products:
             try:
                 item = ProductItem()
                 
                 # Nom du produit
-                item['name'] = product.xpath(
-                    ".//article/div[@class='product-list__product-area-2 g-col-5 g-col-sm-7 g-col-md-4 g-col-lg-3 g-col-xl-3']/a/h2/text()"
-                ).get().strip()
+                name_parts = []
+                pre_strong = product.xpath(".//h2/text()").getall()
+                strong_text = product.xpath(".//h2/strong/text()").get()
+                
+                if pre_strong:
+                    name_parts.extend([part.strip() for part in pre_strong if part.strip()])
+                if strong_text:
+                    name_parts.append(strong_text.strip())
+                
+                item['name'] = " ".join(name_parts).strip()
                 
                 # URL du produit
                 product_url = product.xpath(
@@ -39,18 +58,34 @@ class BoulangerSpider(scrapy.Spider):
                     item['price'] = float(price)
 
                 # URL de l'image
-                image_url = product.xpath(
-                    ".//article/div[@class='product-list__product-area-1 g-col-3 g-col-sm-5 g-col-md-3 g-col-lg-2 g-col-xl-2']/a/@href"
+                srcset = product.xpath(
+                    ".//article/div[@class='product-list__product-area-1 g-col-3 g-col-sm-5 g-col-md-3 g-col-lg-2 g-col-xl-2']/a/picture/img/@srcset"
                 ).get()
-                item['image_url'] = response.urljoin(image_url) if image_url else None
+                
+                if srcset:
+                    image_url = srcset.split(' ')[0]
+                    item['image_url'] = image_url
+                else:
+                    image_url = product.xpath(
+                        ".//article/div[@class='product-list__product-area-1 g-col-3 g-col-sm-5 g-col-md-3 g-col-lg-2 g-col-xl-2']/a/picture/img/@src"
+                    ).get()
+                    item['image_url'] = image_url
 
                 item['site_name'] = 'Boulanger'
                 item['scraped_at'] = datetime.now()
 
-                # Log pour le debugging
-                self.logger.info(f"Extracted product: {item['name']} - {item['price']}€")
-
                 yield item
 
             except Exception as e:
-                self.logger.error(f'Error processing product: {str(e)}, Product HTML: {product.get()}')
+                self.logger.error(f'Error processing product: {str(e)}')
+
+        # Si on a trouvé des produits, on passe à la page suivante
+        if products_count > 0:
+            next_page = current_page + 1
+            next_url = f'https://www.boulanger.com/resultats?tr=casque&numPage={next_page}'
+            self.logger.info(f'Going to next page: {next_url}')
+            yield scrapy.Request(
+                url=next_url,
+                callback=self.parse,
+                meta={'page': next_page}
+            )
