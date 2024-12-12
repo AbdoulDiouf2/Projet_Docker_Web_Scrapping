@@ -1,62 +1,35 @@
-version: '3'
-
 services:
-  # Service MySQL
   db:
-    image: mysql
-    container_name: mysql_db
+    image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: price_comparison
-      MYSQL_USER: teamhadoop
-      MYSQL_PASSWORD: teamhadoop
+      MYSQL_ROOT_PASSWORD: team_hadoop
+      MYSQL_DATABASE: comparateur_prix
+      MYSQL_USER: hadoop
+      MYSQL_PASSWORD: team_hadoop
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # Service PHPMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: team_hadoop
     ports:
       - "8080:80"
     depends_on:
       - db
 
-  # Service Web (Flask)
-  web:
-    build: ./web_app
-    container_name: flask_app
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./web_app:/app
-    environment:
-      MYSQL_HOST: db
-      MYSQL_USER: teamhadoop
-      MYSQL_PASSWORD: teamhadoop
-      MYSQL_DATABASE: price_comparison
+  scraper:
+    build: 
+      context: ./scrapy_app
+      dockerfile: Dockerfile
     depends_on:
       - db
-
-  # Service Scrapy
-  scraper:
-    build: ./scrapy_app
-    container_name: scrapy_app
     volumes:
       - ./scrapy_app:/app
-    environment:
-      MYSQL_HOST: db
-      MYSQL_USER: teamhadoop
-      MYSQL_PASSWORD: teamhadoop
-      MYSQL_DATABASE: price_comparison
-    depends_on:
-      - db
 
 volumes:
   mysql_data:
