@@ -6,7 +6,7 @@ def test_spider():
     settings = get_project_settings()
     
     # Ajouter le pipeline de test
-    settings.set('ITEM_PIPELINES', {'price_scraper.pipelines.TestPipeline': 300})
+    settings.set('ITEM_PIPELINES', {'price_scraper.pipelines.MySQLPipeline': 300})
     
     process = CrawlerProcess(settings)
     process.crawl(BoulangerSpider)
