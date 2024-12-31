@@ -45,7 +45,7 @@ class Database:
                     WHERE name LIKE %s
                 )
                 SELECT * FROM ranked_products
-                WHERE price_rank <= 5
+                WHERE price_rank <= 10
                 ORDER BY site_name, price_rank
             """
             cursor.execute(query, (f'%{search_term}%',))
@@ -59,7 +59,7 @@ class Database:
             }
             
             for product in all_products:
-                if len(results[product['site_name']]) < 5:
+                if len(results[product['site_name']]) < 10:
                     results[product['site_name']].append(product)
             
             return results
