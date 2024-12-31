@@ -16,6 +16,9 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{ product.name }}</h5>
+                <div class="description-text small mb-2">
+                    {{ product.description }}
+                </div>
                 <p class="card-text">
                     <span class="{{ 'best-price' if product.is_cheapest }}">
                         {{ "%.2f"|format(product.price) }}€
@@ -42,7 +45,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Fnac</h5>
+                <h5 class="mb-0">CDiscount</h5>
             </div>
             <div class="card-body p-2" id="fnacResults"></div>
         </div>
@@ -86,6 +89,7 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
                             <div class="col-8">
                                 <div class="card-body p-2">
                                     <h6 class="card-title mb-1">${product.name}</h6>
+                                    <div class="description-text small mb-2">${product.description}</div>
                                     <p class="card-text mb-1">
                                         <strong>${product.price.toFixed(2)}€</strong>
                                     </p>

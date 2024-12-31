@@ -42,57 +42,37 @@ class MySQLPipeline:
 
     def process_item(self, item, spider):
         try:
-            # Vérification des données requises
-            if not item.get('name') or not item.get('price') or not item.get('product_url'):
-                raise DropItem(f"Missing required fields in {item}")
+            # Nettoyer la description
+            if isinstance(item['description'], (list, tuple)):
+                item['description'] = ' '.join(d.strip() for d in item['description']).replace('\n', '')
 
-            # Vérifie si le produit existe déjà
+            # Vérifier si le produit existe
             check_sql = "SELECT id, price FROM products WHERE product_url = %s"
             self.cur.execute(check_sql, (item['product_url'],))
             existing_product = self.cur.fetchone()
+            self.cur.fetchall()  # Vider le curseur
 
             if existing_product:
-                # Mise à jour du produit existant
-                old_price = existing_product[1]
                 update_sql = """
                 UPDATE products 
-                SET name = %s, 
-                    price = %s, 
-                    site_name = %s, 
-                    image_url = %s, 
-                    scraped_at = %s
+                SET name = %s, price = %s, site_name = %s, image_url = %s, description = %s, scraped_at = %s
                 WHERE product_url = %s
                 """
-                self.cur.execute(update_sql, (
-                    item['name'],
-                    item['price'],
-                    item['site_name'],
-                    item['image_url'],
-                    item['scraped_at'],
-                    item['product_url']
-                ))
+                self.cur.execute(update_sql, (item['name'], item['price'], item['site_name'], 
+                                            item['image_url'], item['description'], 
+                                            item['scraped_at'], item['product_url']))
                 self.stats['updated'] += 1
-                
-                if old_price != item['price']:
-                    spider.logger.info(f"Price updated for {item['name']}: {old_price} -> {item['price']}")
             else:
-                # Insertion d'un nouveau produit
                 insert_sql = """
                 INSERT INTO products 
-                (name, price, site_name, product_url, image_url, scraped_at)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                (name, price, site_name, product_url, image_url, description, scraped_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
-                self.cur.execute(insert_sql, (
-                    item['name'],
-                    item['price'],
-                    item['site_name'],
-                    item['product_url'],
-                    item['image_url'],
-                    item['scraped_at']
-                ))
+                self.cur.execute(insert_sql, (item['name'], item['price'], item['site_name'],
+                                            item['product_url'], item['image_url'], 
+                                            item['description'], item['scraped_at']))
                 self.stats['inserted'] += 1
-                spider.logger.info(f"New product inserted: {item['name']}")
-            
+
             self.conn.commit()
             return item
 

@@ -74,6 +74,10 @@ class BoulangerSpider(scrapy.Spider):
                 item['site_name'] = 'Boulanger'
                 item['scraped_at'] = datetime.now()
 
+                # Description (liste des caractéristiques)
+                description_elements = product.xpath(".//article/div[@class='product-list__product-area-2 g-col-5 g-col-sm-7 g-col-md-4 g-col-lg-3 g-col-xl-3']/a[2]/ul/li/text()").getall()
+                item['description'] = '; '.join([desc.strip() for desc in description_elements if desc.strip()])
+
                 yield item
 
             except Exception as e:
