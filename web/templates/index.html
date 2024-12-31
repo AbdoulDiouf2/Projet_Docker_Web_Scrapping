@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Vue par défaut (style e-commerce) -->
+<div id="defaultView" class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+        <div class="card product-card h-100">
+            {% if product.is_cheapest %}
+            <div class="price-badge">
+                <span class="badge bg-success">Meilleur prix</span>
+            </div>
+            {% endif %}
+            <div class="product-img-container">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="card-img-top">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">
+                    <span class="{{ 'best-price' if product.is_cheapest }}">
+                        {{ "%.2f"|format(product.price) }}€
+                    </span>
+                    <span class="ms-2 badge bg-secondary">{{ product.site_name }}</span>
+                </p>
+                <a href="{{ product.product_url }}" target="_blank" class="btn btn-primary">Voir l'offre</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Vue comparative (3 colonnes) -->
+<div id="compareView" class="row" style="display: none;">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Boulanger</h5>
+            </div>
+            <div class="card-body p-2" id="boulangerResults"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Fnac</h5>
+            </div>
+            <div class="card-body p-2" id="fnacResults"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Darty</h5>
+            </div>
+            <div class="card-body p-2" id="dartyResults"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.trim();
+    const defaultView = document.getElementById('defaultView');
+    const compareView = document.getElementById('compareView');
+    
+    if (searchTerm) {
+        defaultView.style.display = 'none';
+        compareView.style.display = 'flex';
+        
+        fetch(`/search?term=${encodeURIComponent(searchTerm)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Fonction pour générer une carte produit
+                const generateProductCard = (product) => `
+                    <div class="card mb-2">
+                        <div class="row g-0">
+                            <div class="col-4">
+                                <div class="p-2">
+                                    <img src="${product.image_url}" 
+                                         class="img-fluid rounded" 
+                                         alt="${product.name}">
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="card-body p-2">
+                                    <h6 class="card-title mb-1">${product.name}</h6>
+                                    <p class="card-text mb-1">
+                                        <strong>${product.price.toFixed(2)}€</strong>
+                                    </p>
+                                    <a href="${product.product_url}" 
+                                       target="_blank" 
+                                       class="btn btn-sm btn-primary">
+                                        Voir l'offre
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Mise à jour de chaque colonne
+                document.getElementById('boulangerResults').innerHTML = 
+                    data.Boulanger.map(generateProductCard).join('');
+                document.getElementById('fnacResults').innerHTML = 
+                    data.Fnac.map(generateProductCard).join('');
+                document.getElementById('dartyResults').innerHTML = 
+                    data.Darty.map(generateProductCard).join('');
+            });
+    } else {
+        defaultView.style.display = 'flex';
+        compareView.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

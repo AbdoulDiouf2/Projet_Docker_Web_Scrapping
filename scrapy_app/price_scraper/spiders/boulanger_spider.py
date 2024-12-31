@@ -7,7 +7,7 @@ class BoulangerSpider(scrapy.Spider):
     
     def start_requests(self):
         # On commence par la première page
-        url = 'https://www.boulanger.com/resultats?tr=casque'
+        url = 'https://www.boulanger.com/c/nav-filtre/resultats?tr=casque&brand~apple|brand~asus|brand~beats|brand~bose|brand~jabra|brand~jbl|brand~jvc|brand~philips|brand~samsung'
         yield scrapy.Request(url, callback=self.parse, meta={'page': 1})
     
     custom_settings = {
@@ -82,7 +82,7 @@ class BoulangerSpider(scrapy.Spider):
         # Si on a trouvé des produits, on passe à la page suivante
         if products_count > 0:
             next_page = current_page + 1
-            next_url = f'https://www.boulanger.com/resultats?tr=casque&numPage={next_page}'
+            next_url = f'https://www.boulanger.com/c/nav-filtre/resultats?tr=casque&brand~apple|brand~asus|brand~beats|brand~bose|brand~jabra|brand~jbl|brand~jvc|brand~philips|brand~samsung&numPage={next_page}'
             self.logger.info(f'Going to next page: {next_url}')
             yield scrapy.Request(
                 url=next_url,
