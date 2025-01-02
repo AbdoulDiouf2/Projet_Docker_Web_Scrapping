@@ -54,7 +54,7 @@ class Database:
             # Organiser les résultats par site
             results = {
                 'Boulanger': [],
-                'Fnac': [],
+                'CDiscount': [],
                 'Darty': []
             }
             
