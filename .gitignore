@@ -1,0 +1,24 @@
+# Fichiers d'environnement
+.env
+
+# Fichiers et répertoires Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Fichiers de logs
+*.log
+
+# Fichiers de base de données
+*.sqlite3
+
+# Fichiers de configuration
+*.ini
+*.cfg
+
+# Fichiers de compilation
+*.so
+
+# Répertoires de données
+scrapy_app/exports/

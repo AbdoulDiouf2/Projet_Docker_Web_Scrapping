@@ -25,9 +25,38 @@ Ce projet est un comparateur de prix qui collecte des informations sur les produ
 projet/
 ├── docker-compose.yml
 ├── README.md
+├── .env
 ├── scrapy_app/          # Application de scraping
-├── web_app/            # Application web
-└── mysql/             # Configuration MySQL
+│   ├── boulanger_products.json
+│   ├── Dockerfile
+│   ├── exports/
+│   ├── price_scraper/
+│   │   ├── __init__.py
+│   │   ├── items.py
+│   │   ├── pipelines.py
+│   │   ├── settings.py
+│   │   └── spiders/
+│   │       ├── __init__.py
+│   │       ├── boulanger_spider.py
+│   │       ├── cdiscount_spider.py
+│   │       └── darty_spider.py
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── scrapy.cfg
+│   └── test_spider.py
+├── web/                # Application web
+│   ├── __pycache__/
+│   ├── app.py
+│   ├── config.py
+│   ├── Dockerfile
+│   ├── models.py
+│   ├── requirements.txt
+│   └── templates/
+│       ├── base.html
+│       └── index.html
+└── mysql/              # Configuration MySQL
+    ├── Dockerfile
+    └── init.sql
 ```
 
 ## 🚦 Prérequis
@@ -38,7 +67,14 @@ projet/
 ## 🔧 Installation et Démarrage
 
 1. Cloner le repository
-2. Lancer les conteneurs avec Docker Compose :
+2. Créer un fichier `.env` à la racine du projet avec le contenu suivant :
+   ```properties
+   MYSQL_ROOT_PASSWORD=your_root_password
+   MYSQL_DATABASE=your_database_name
+   MYSQL_USER=your_database_user
+   MYSQL_PASSWORD=your_database_password
+   ```
+3. Lancer les conteneurs avec Docker Compose :
    ```bash
    docker-compose up
    ```
@@ -47,13 +83,6 @@ projet/
 
 - **Application Web**: http://localhost:5000
 - **PHPMyAdmin**: http://localhost:8080
-  - Utilisateur: ...
-  - Mot de passe: ...
-- **MySQL**:
-  - Port: 3306
-  - Base de données: price_comparison
-  - Utilisateur: ...
-  - Mot de passe: ...
 
 ## 👥 Équipe
 
