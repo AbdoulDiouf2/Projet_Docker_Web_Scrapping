@@ -30,6 +30,8 @@ services:
       - db
     volumes:
       - ./scrapy_app:/app
+    tmpfs:
+      - /tmp
 
   web:
     build: 
