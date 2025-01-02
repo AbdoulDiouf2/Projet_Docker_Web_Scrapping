@@ -18,7 +18,7 @@ def search():
     if not search_term:
         return jsonify({
             'Boulanger': [],
-            'Fnac': [],
+            'CDiscount': [],
             'Darty': []
         })
     
