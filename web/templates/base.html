@@ -217,12 +217,12 @@
                     .then(data => {
                         // Afficher les résultats pour chaque site
                         displayResults('boulangerResults', data.Boulanger);
-                        displayResults('fnacResults', data.Fnac);
+                        displayResults('cdiscountResults', data.CDiscount);
                         displayResults('dartyResults', data.Darty);
                     })
                     .catch(error => {
                         console.error('Erreur:', error);
-                        ['boulangerResults', 'fnacResults', 'dartyResults'].forEach(id => {
+                        ['boulangerResults', 'cdiscountResults', 'dartyResults'].forEach(id => {
                             const div = document.getElementById(id);
                             if (div) {
                                 div.innerHTML = '<p class="text-center p-3 text-danger">Une erreur est survenue</p>';

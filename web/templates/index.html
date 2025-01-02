@@ -47,7 +47,7 @@
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0">CDiscount</h5>
             </div>
-            <div class="card-body p-2" id="fnacResults"></div>
+            <div class="card-body p-2" id="cdiscountResults"></div>
         </div>
     </div>
     <div class="col-md-4">
@@ -107,9 +107,9 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
                 // Mise à jour de chaque colonne
                 document.getElementById('boulangerResults').innerHTML = 
                     data.Boulanger.map(generateProductCard).join('');
-                document.getElementById('fnacResults').innerHTML = 
-                    data.Fnac.map(generateProductCard).join('');
-                document.getElementById('dartyResults').innerHTML = 
+                document.getElementById('cdiscountResults').innerHTML = 
+                    data.CDiscount.map(generateProductCard).join('');
+                document.getElementById('cdiscountResults').innerHTML = 
                     data.Darty.map(generateProductCard).join('');
             });
     } else {
