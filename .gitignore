@@ -6,19 +6,23 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.egg-info/
+*.dist-info/
+*.ipynb_checkpoints/
+*.venv/
+*.env
 
 # Fichiers de logs
 *.log
+*.out
+*.err
 
 # Fichiers de base de données
 *.sqlite3
-
-# Fichiers de configuration
-*.ini
-*.cfg
+*.db
 
 # Fichiers de compilation
 *.so
-
-# Répertoires de données
-scrapy_app/exports/
+*.o
+*.obj
+*.exe

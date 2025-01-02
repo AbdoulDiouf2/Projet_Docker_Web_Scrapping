@@ -5,10 +5,10 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 
+db = Database()
+
 @app.route('/')
 def index():
-    db = Database()
-    # Utilisation de get_all_products pour la vue par défaut
     products = db.get_all_products()
     return render_template('index.html', products=products)
 
@@ -22,7 +22,6 @@ def search():
             'Darty': []
         })
     
-    db = Database()
     products = db.search_products(search_term)
     return jsonify(products)
 
