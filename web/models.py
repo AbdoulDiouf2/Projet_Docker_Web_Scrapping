@@ -55,7 +55,7 @@ class Database:
             results = {
                 'Boulanger': [],
                 'CDiscount': [],
-                'Darty': []
+                'eBay': []
             }
             
             for product in all_products:

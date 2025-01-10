@@ -89,6 +89,10 @@ class MySQLPipeline:
                                               item['description'], item['scraped_at']))
                 self.stats['inserted'] += 1
 
+            # Supprimer tous les produits contenant "Smartphone" au début
+            delete_smartphone_sql = "DELETE FROM products WHERE name LIKE 'Smartphone %'"
+            self.cur.execute(delete_smartphone_sql)
+
             self.conn.commit()
             return item
 

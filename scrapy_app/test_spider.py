@@ -2,6 +2,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from price_scraper.spiders.boulanger_spider import BoulangerSpider
 from price_scraper.spiders.cdiscount_spider import CdiscountSpider
+from price_scraper.spiders.ebay_spider import EBaySpider
 
 def test_spider():
     settings = get_project_settings()
@@ -12,6 +13,7 @@ def test_spider():
     process = CrawlerProcess(settings)
     process.crawl(CdiscountSpider)
     process.crawl(BoulangerSpider)
+    process.crawl(EBaySpider)
     process.start()
 
 if __name__ == '__main__':

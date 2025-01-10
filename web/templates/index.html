@@ -53,9 +53,9 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Darty</h5>
+                <h5 class="mb-0">eBay</h5>
             </div>
-            <div class="card-body p-2" id="dartyResults"></div>
+            <div class="card-body p-2" id="ebayResults"></div>
         </div>
     </div>
 </div>
@@ -109,8 +109,8 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
                     data.Boulanger.map(generateProductCard).join('');
                 document.getElementById('cdiscountResults').innerHTML = 
                     data.CDiscount.map(generateProductCard).join('');
-                document.getElementById('cdiscountResults').innerHTML = 
-                    data.Darty.map(generateProductCard).join('');
+                document.getElementById('ebaytResults').innerHTML = 
+                    data.eBay.map(generateProductCard).join('');
             });
     } else {
         defaultView.style.display = 'flex';

@@ -19,7 +19,7 @@ def search():
         return jsonify({
             'Boulanger': [],
             'CDiscount': [],
-            'Darty': []
+            'eBay': []
         })
     
     products = db.search_products(search_term)
