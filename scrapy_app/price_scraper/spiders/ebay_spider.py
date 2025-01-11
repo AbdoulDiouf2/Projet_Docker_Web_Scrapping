@@ -39,3 +39,37 @@ class EBaySpider(scrapy.Spider):
         chrome_options.add_argument('--lang=fr-FR')
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
+
+        # Installation automatique du driver avec webdriver_manager
+        service = Service(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(
+            service=service,
+            options=chrome_options
+        )
+       
+        # Modifier les propriétés pour éviter la détection
+        self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+            "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'
+        })
+ 
+    def start_requests(self):
+        urls = ['https://www.ebay.fr/sch/i.html?_dcat=112529&_fsrp=1&_from=R40&_nkw=ecouteur&_sacat=0&Marque=Philips%7CBose%7CASUS%7CApple%7CSamsung%7CJVC%7CJBL%7CJabra%7CBeat&rt=nc&LH_ItemCondition=1000']
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+ 
+    def parse(self, response):
+        self.driver.get(response.url)
+        self.logger.info("Page chargée : %s", response.url)
+       
+        # Attendre que la page soit complètement chargée
+        time.sleep(5)
+       
+        # XPATH pour tous les produits : //ul[@class='srp-results srp-list clearfix']/li
+        # XPath pour le nom : //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/a/div/span/text()
+        # XPath pour le prix : //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/div[3]/div/div/span/text()
+        # XPath pour l'URL du produit : //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/a/@href
+        # XPath pour l'image du produit : //ul[@class='srp-results srp-list clearfix']/li/div/div[1]/div/a/div/img/@src
+        # Aperçu de la description --> "Neuf | Particulier"
+        # XPath pour la description :
+        # "Neuf" --> //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/div[2]/span/text()
+        # "Particulier --> //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/div[2]/text()
