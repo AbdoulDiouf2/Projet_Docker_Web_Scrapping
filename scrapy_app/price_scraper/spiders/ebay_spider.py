@@ -73,3 +73,36 @@ class EBaySpider(scrapy.Spider):
         # XPath pour la description :
         # "Neuf" --> //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/div[2]/span/text()
         # "Particulier --> //ul[@class='srp-results srp-list clearfix']/li/div/div[2]/div[2]/text()
+
+        try:
+            articles = self.driver.find_elements(By.XPATH, '//ul[@class="srp-results srp-list clearfix"]/li')
+            if not articles:
+                self.logger.error("Aucun article trouvé")
+                return
+ 
+            for article in articles:
+                try:
+                    item = ProductItem()
+                    item['site_name'] = "eBay"
+                    item['scraped_at'] = datetime.now()
+                   
+                    # Nom
+                    item['name'] = article.find_element(By.XPATH, './/div/div[2]/a/div/span').text
+                   
+                    # Prix
+                    price = article.find_element(By.XPATH, './/div/div[2]/div[3]/div/div/span').text
+                    item['price'] = float(price.replace('EUR', '').replace(',', '.').strip())
+                   
+                    # URL et image
+                    item['product_url'] = article.find_element(By.XPATH, './/div/div[2]/a').get_attribute('href')
+                    item['image_url'] = article.find_element(By.XPATH, './/div/div[1]/div/a/div/img').get_attribute('src')
+ 
+                    # Description
+                    neuf = article.find_elements(By.XPATH, './/div/div[2]/div[2]/span')
+                    particulier = article.find_elements(By.XPATH, './/div/div[2]/div[2]')
+                    item['description'] = 'Neuf' if neuf else 'Particulier' if particulier else 'N/A'
+                   
+                    yield item
+                   
+                except Exception as e:
+                    self.logger.error(f"Erreur lors de l'extraction de l'article : {e}")
