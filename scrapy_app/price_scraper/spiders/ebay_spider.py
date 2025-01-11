@@ -106,3 +106,26 @@ class EBaySpider(scrapy.Spider):
                    
                 except Exception as e:
                     self.logger.error(f"Erreur lors de l'extraction de l'article : {e}")
+
+                # Pagination
+            current_page = response.meta.get('page', 1)
+            if current_page < 10 and len(articles) > 0:
+                next_page = current_page + 1
+                next_url = f"https://www.ebay.fr/sch/i.html?_dcat=112529&_fsrp=1&_from=R40&_nkw=ecouteur&_sacat=0&Marque=Philips%7CBose%7CASUS%7CApple%7CSamsung%7CJVC%7CJBL%7CJabra%7CBeat&rt=nc&LH_ItemCondition=1000&_pgn={next_page}"
+                self.logger.info(f'Navigation vers la page suivante: {next_page}')
+                yield scrapy.Request(
+                    url=next_url,
+                    callback=self.parse,
+                    meta={'page': next_page}
+                )
+            elif current_page >= 10:
+                self.logger.info("Limite de 10 pages atteinte, arrêt du scraping.")
+            else:
+                self.logger.info("Plus de produits trouvés, arrêt du scraping")
+ 
+        except Exception as e:
+            self.logger.error(f"Erreur générale : {e}")
+ 
+    def closed(self, reason):
+        if hasattr(self, 'driver'):
+            self.driver.quit()
