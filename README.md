@@ -27,9 +27,7 @@ projet/
 ├── README.md
 ├── .env
 ├── scrapy_app/          # Application de scraping
-│   ├── boulanger_products.json
 │   ├── Dockerfile
-│   ├── exports/
 │   ├── price_scraper/
 │   │   ├── __init__.py
 │   │   ├── items.py
@@ -39,13 +37,12 @@ projet/
 │   │       ├── __init__.py
 │   │       ├── boulanger_spider.py
 │   │       ├── cdiscount_spider.py
-│   │       └── darty_spider.py
+│   │       └── ebay_spider.py
 │   ├── README.md
 │   ├── requirements.txt
 │   ├── scrapy.cfg
 │   └── test_spider.py
 ├── web/                # Application web
-│   ├── __pycache__/
 │   ├── app.py
 │   ├── config.py
 │   ├── Dockerfile
