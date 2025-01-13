@@ -7,6 +7,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Styles pour le footer fixe */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+ 
+        main {
+            flex: 1 0 auto;
+        }
+ 
+        .footer {
+            flex-shrink: 0;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+        /* *** */
+ 
         .product-card {
             transition: all 0.3s ease;
             height: 100%;
@@ -75,6 +95,7 @@
         }
         .navbar-brand {
             font-weight: bold;
+            color: white;
         }
         footer {
             background: #2c3e50;
@@ -88,20 +109,49 @@
             margin-bottom: 20px;
         }
         .description-text {
-            max-height: none;
-            overflow: visible;
-            text-overflow: initial;
+            min-height: 60px;  /* Hauteur minimum pour la description */
             display: block;
-            -webkit-line-clamp: initial;
-            line-clamp: initial;
-            -webkit-box-orient: initial;
             margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+ 
+        /* Style pour les boutons de navigation haut/bas */
+        .scroll-button {
+            position: fixed;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+ 
+        .scroll-button:hover {
+            background-color: #34495e;
+            transform: scale(1.1);
+        }
+ 
+        #scrollToTop {
+            bottom: 80px;
+        }
+ 
+        #scrollToBottom {
+            bottom: 30px;
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-headphones me-2"></i>
@@ -109,7 +159,7 @@
             </a>
         </div>
     </nav>
-
+ 
     <!-- Barre de recherche -->
     <div class="search-container">
         <div class="container">
@@ -120,9 +170,9 @@
                         <span class="input-group-text bg-white">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" 
-                               class="form-control" 
-                               id="searchInput" 
+                        <input type="text"
+                               class="form-control"
+                               id="searchInput"
                                placeholder="Recherchez un casque..."
                                autocomplete="off">
                     </div>
@@ -130,7 +180,7 @@
             </div>
         </div>
     </div>
-
+ 
     <!-- Indicateur de chargement -->
     <div id="loading">
         <div class="d-flex align-items-center">
@@ -140,106 +190,158 @@
             <span>Recherche en cours...</span>
         </div>
     </div>
-
+ 
     <!-- Contenu principal -->
     <div class="container">
         {% block content %}{% endblock %}
     </div>
-
+ 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer mt-auto">
         <div class="container text-center">
             <p class="mb-0">© 2024 Comparateur de Casques - Tous droits réservés</p>
         </div>
     </footer>
-
+ 
+    <button id="scrollToTop" class="scroll-button" title="Remonter en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <button id="scrollToBottom" class="scroll-button" title="Aller en bas">
+        <i class="fas fa-arrow-down"></i>
+    </button>
+ 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    const searchInput = document.getElementById('searchInput');
-    const loading = document.getElementById('loading');
-    const defaultView = document.getElementById('defaultView');
-    const compareView = document.getElementById('compareView');
-    let searchTimeout;
-
-    function displayResults(containerId, products) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        if (!products || products.length === 0) {
-            container.innerHTML = '<p class="text-center p-3">Aucun résultat trouvé</p>';
-            return;
-        }
-
-        const html = products.map(product => `
-            <div class="card mb-3 product-card">
-                <div class="row g-0">
-                    <div class="col-4">
-                        <div class="product-img-container p-2">
-                            <img src="${product.image_url}" 
-                                 class="img-fluid rounded" 
-                                 alt="${product.name}">
+        const searchInput = document.getElementById('searchInput');
+        const loading = document.getElementById('loading');
+        const defaultView = document.getElementById('defaultView');
+        const compareView = document.getElementById('compareView');
+        let searchTimeout;
+ 
+        function displayResults(containerId, products) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+ 
+            if (!products || products.length === 0) {
+                container.innerHTML = '<p class="text-center p-3">Aucun résultat trouvé</p>';
+                return;
+            }
+ 
+            const html = products.map(product => `
+                <div class="card mb-3 product-card">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <div class="product-img-container p-2">
+                                <img src="${product.image_url}"
+                                    class="img-fluid rounded"
+                                    alt="${product.name}">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-8">
-                        <div class="card-body">
-                            <h6 class="card-title">${product.name}</h6>
-                            <p class="card-text">
-                                <span class="price-tag">${Number(product.price).toFixed(2)}€</span>
-                            </p>
-                            <a href="${product.product_url}" 
-                               target="_blank" 
-                               class="btn btn-sm btn-primary">
-                                Voir l'offre
-                            </a>
+                        <div class="col-8">
+                            <div class="card-body">
+                                <h6 class="card-title">${product.name}</h6>
+                                <p class="card-text">
+                                    <span class="price-tag">${Number(product.price).toFixed(2)}€</span>
+                                </p>
+                                <a href="${product.product_url}"
+                                target="_blank"
+                                class="btn btn-sm btn-primary">
+                                    Voir l'offre
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
-
-        container.innerHTML = html;
-    }
-
-    searchInput.addEventListener('input', function(e) {
-        const searchTerm = e.target.value.trim();
-        
-        clearTimeout(searchTimeout);
-        
-        if (searchTerm) {
-            loading.style.display = 'block';
-            defaultView.style.display = 'none';
-            compareView.style.display = 'flex';
-
-            searchTimeout = setTimeout(() => {
-                fetch(`/search?term=${encodeURIComponent(searchTerm)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Afficher les résultats pour chaque site
-                        displayResults('boulangerResults', data.Boulanger);
-                        displayResults('cdiscountResults', data.CDiscount);
-                        displayResults('ebayResults', data.eBay);
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        ['boulangerResults', 'cdiscountResults', 'ebayResults'].forEach(id => {
-                            const div = document.getElementById(id);
-                            if (div) {
-                                div.innerHTML = '<p class="text-center p-3 text-danger">Une erreur est survenue</p>';
-                            }
-                        });
-                    })
-                    .finally(() => {
-                        loading.style.display = 'none';
-                    });
-            }, 300);
-        } else {
-            defaultView.style.display = 'flex';
-            compareView.style.display = 'none';
-            loading.style.display = 'none';
+            `).join('');
+ 
+            container.innerHTML = html;
         }
-    });
-</script>
+ 
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.trim();
+            clearTimeout(searchTimeout);
+           
+            if (searchTerm) {
+                loading.style.display = 'block';
+                defaultView.style.display = 'none';
+                compareView.style.display = 'block';  // On utilise "block" au lieu de "flex"
+ 
+                searchTimeout = setTimeout(() => {
+                    fetch(`/search?term=${encodeURIComponent(searchTerm)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            displayResults('boulangerResults', data.Boulanger);
+                            displayResults('cdiscountResults', data.CDiscount);
+                            displayResults('ebayResults', data.eBay);
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            ['boulangerResults', 'cdiscountResults', 'ebayResults'].forEach(id => {
+                                const div = document.getElementById(id);
+                                if (div) {
+                                    div.innerHTML = '<p class="text-center p-3 text-danger">Une erreur est survenue</p>';
+                                }
+                            });
+                        })
+                        .finally(() => {
+                            loading.style.display = 'none';
+                        });
+                }, 300);
+            } else {
+                defaultView.style.display = 'block';  // On utilise "block" au lieu de "flex"
+                compareView.style.display = 'none';
+                loading.style.display = 'none';
+            }
+        });
+ 
+        // Gestion des boutons de défilement
+        const scrollTopButton = document.getElementById('scrollToTop');
+            const scrollBottomButton = document.getElementById('scrollToBottom');
+ 
+            // Fonction pour vérifier la position de défilement
+            function checkScroll() {
+                const scrollPosition = window.scrollY;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+ 
+                // Afficher/masquer le bouton "Remonter"
+                if (scrollPosition > windowHeight / 2) {
+                    scrollTopButton.style.display = 'flex';
+                } else {
+                    scrollTopButton.style.display = 'none';
+                }
+ 
+                // Afficher/masquer le bouton "Descendre"
+                if (scrollPosition < (documentHeight - windowHeight * 1.5)) {
+                    scrollBottomButton.style.display = 'flex';
+                } else {
+                    scrollBottomButton.style.display = 'none';
+                }
+            }
+ 
+            // Écouteurs d'événements pour les boutons
+            scrollTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+ 
+            scrollBottomButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: document.documentElement.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+ 
+            // Écouter l'événement de défilement
+            window.addEventListener('scroll', checkScroll);
+            window.addEventListener('resize', checkScroll);
+ 
+            // Vérification initiale
+            checkScroll();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
