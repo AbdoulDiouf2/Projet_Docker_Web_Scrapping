@@ -160,3 +160,103 @@
              <div class="card-body" id="boulangerResults"></div>
          </div>
      </div>
+      <!-- CDiscount -->
+      <div class="col-12 col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-shopping-cart me-2"></i>CDiscount
+                </h5>
+            </div>
+            <div class="card-body" id="cdiscountResults"></div>
+        </div>
+    </div>
+
+    <!-- eBay -->
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-globe me-2"></i>eBay
+                </h5>
+            </div>
+            <div class="card-body" id="ebayResults"></div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateProductDisplay() {
+    const sortValue = document.getElementById('sortSelect').value;
+    const siteValue = document.getElementById('siteFilter').value;
+    const priceMax = parseInt(document.getElementById('priceRange').value);
+   
+    let products = Array.from(document.querySelectorAll('.product-item'));
+   
+    products.sort((a, b) => {
+        const priceA = parseFloat(a.dataset.price);
+        const priceB = parseFloat(b.dataset.price);
+        const nameA = a.querySelector('.card-title').textContent.trim();
+        const nameB = b.querySelector('.card-title').textContent.trim();
+       
+        switch(sortValue) {
+            case 'price_asc':
+                return priceA - priceB;
+            case 'price_desc':
+                return priceB - priceA;
+            case 'name_asc':
+                return nameA.localeCompare(nameB);
+            case 'name_desc':
+                return nameB.localeCompare(nameA);
+            default:
+                return 0;
+        }
+    });
+   
+    const productContainer = document.querySelector('.product-item').parentNode;
+   
+    products.forEach(product => {
+        const price = parseFloat(product.dataset.price);
+        const site = product.dataset.site;
+       
+        let show = true;
+       
+        if (siteValue !== 'all' && site !== siteValue) show = false;
+        if (price > priceMax) show = false;
+       
+        product.style.display = show ? '' : 'none';
+       
+        if (show) {
+            productContainer.appendChild(product);
+        }
+    });
+}
+
+document.getElementById('sortSelect').addEventListener('change', updateProductDisplay);
+document.getElementById('siteFilter').addEventListener('change', updateProductDisplay);
+document.getElementById('priceRange').addEventListener('input', function(e) {
+    document.getElementById('priceValue').textContent = e.target.value + '€';
+    updateProductDisplay();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateProductDisplay();
+   
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+        });
+       
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}
