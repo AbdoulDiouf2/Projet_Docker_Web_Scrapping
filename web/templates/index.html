@@ -79,3 +79,35 @@
             </div>
         </div>
     </div>
+ <!-- Filtres -->
+ <div class="col-12 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Trier par :</label>
+                    <select class="form-select" id="sortSelect">
+                        <option value="price_asc">Prix croissant</option>
+                        <option value="price_desc">Prix décroissant</option>
+                        <option value="name_asc">Nom (A-Z)</option>
+                        <option value="name_desc">Nom (Z-A)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Site :</label>
+                    <select class="form-select" id="siteFilter">
+                        <option value="all">Tous les sites</option>
+                        <option value="Boulanger">Boulanger</option>
+                        <option value="CDiscount">CDiscount</option>
+                        <option value="eBay">eBay</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Prix max :</label>
+                    <input type="range" class="form-range" id="priceRange" min="0" max="1000" step="50">
+                    <div class="text-muted" id="priceValue">1000€</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
