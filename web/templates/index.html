@@ -45,3 +45,37 @@
     </div>
     {% endif %}
 {% endmacro %}
+
+{% block content %}
+<!-- Vue par défaut (style e-commerce) -->
+<div id="defaultView" class="row">
+ 
+    <!-- Section des statistiques -->
+    <div class="col-12 mb-4">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-shopping-cart me-2"></i>Nombre de produits</h5>
+                        <p class="card-text h3">{{ products|length }} / page</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-tag me-2"></i>Page actuelle</h5>
+                        <p class="card-text h3">{{ current_page }} / {{ total_pages }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-percent me-2"></i>Sites comparés</h5>
+                        <p class="card-text h3">3 sites</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
