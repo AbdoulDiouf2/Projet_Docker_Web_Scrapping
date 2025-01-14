@@ -16,7 +16,7 @@ Ce projet est un comparateur de prix qui collecte des informations sur les produ
 - **MySQL**: Base de données
 - **Docker**: Conteneurisation
 - **Docker Compose**: Orchestration des conteneurs
-- **Flask/FastAPI**: Serveur web (à définir)
+- **Flask**: Serveur web
 - **PHPMyAdmin**: Interface d'administration de la base de données
 
 ## 📁 Structure du Projet
@@ -67,7 +67,7 @@ projet/
 2. Créer un fichier `.env` à la racine du projet avec le contenu suivant :
    ```properties
    MYSQL_ROOT_PASSWORD=your_root_password
-   MYSQL_DATABASE=your_database_name
+   MYSQL_DATABASE=comparateur_prix
    MYSQL_USER=your_database_user
    MYSQL_PASSWORD=your_database_password
    ```

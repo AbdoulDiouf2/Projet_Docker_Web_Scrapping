@@ -1,10 +1,11 @@
 FROM mysql:8.0
 
 # Variables d'environnement pour la configuration initiale
-ENV MYSQL_DATABASE=comparateur_prix
-ENV MYSQL_USER=hadoop
-ENV MYSQL_PASSWORD=team_hadoop
-ENV MYSQL_ROOT_PASSWORD=team_hadoop
+# Importation des variables d'environnement depuis le fichier .env
+ENV MYSQL_DATABASE=${MYSQL_DATABASE}
+ENV MYSQL_USER=${MYSQL_USER}
+ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
+ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 # Copie du script d'initialisation
 COPY init.sql /docker-entrypoint-initdb.d/
